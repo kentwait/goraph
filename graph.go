@@ -162,9 +162,9 @@ type Graph interface {
 	// EdgeWeight returns the weight from id1 to id2.
 	EdgeWeight(id1, id2 ID) (float64, error)
 
-	// GetSources returns the map of parent Nodes.
+	// ParentNodes returns the map of parent Nodes.
 	// (Nodes that come towards the argument vertex.)
-	GetSources(id ID) (map[ID]Node, error)
+	ParentNodes(id ID) (map[ID]Node, error)
 
 	// GetTargets returns the map of child Nodes.
 	// (Nodes that go out of the argument vertex.)
@@ -378,7 +378,7 @@ func (g *graph) EdgeWeight(id1, id2 ID) (float64, error) {
 	return 0.0, fmt.Errorf("there is no edge from %s to %s", id1, id2)
 }
 
-func (g *graph) GetSources(id ID) (map[ID]Node, error) {
+func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
