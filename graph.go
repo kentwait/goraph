@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"io"
 	"sync"
-
-	"gopkg.in/yaml.v2"
 )
 
 // ID is unique identifier.
@@ -16,29 +14,22 @@ type ID interface {
 	String() string
 }
 
+// StringID is a new type based on string
 type StringID string
 
 func (s StringID) String() string {
 	return string(s)
 }
 
-// Node is vertex. The ID must be unique within the graph.
+// Node represents a vertex. The ID must be unique within the graph.
 type Node interface {
-	// ID returns the ID.
-	ID() ID
+	ID() ID // ID method returns the ID.
 	String() string
+	Props() map[string]string // Props returns properties of a node
 }
-
 type node struct {
-	id string
-}
-
-var nodeCnt uint64
-
-func NewNode(id string) Node {
-	return &node{
-		id: id,
-	}
+	id    string
+	props map[string]string
 }
 
 func (n *node) ID() ID {
@@ -48,6 +39,17 @@ func (n *node) ID() ID {
 func (n *node) String() string {
 	return n.id
 }
+
+// NewNode creates a new Node type
+func NewNode(id string, props map[string]string) Node {
+	// TODO : Check if id is unique in the graph
+	return &node{
+		id:    id,
+		props: props,
+	}
+}
+
+var nodeCnt uint64
 
 // Edge connects between two Nodes.
 type Edge interface {
