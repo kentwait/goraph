@@ -193,9 +193,9 @@ type graph struct {
 	// nodes stores all nodes.
 	nodes map[ID]Node
 
-	// nodeToSources maps a Node identifer to sources(parents)
+	// nodeParents maps a Node identifer to sources(parents)
 	// with edge weights.
-	nodeToSources map[ID]map[ID]float64
+	nodeParents map[ID]map[ID]float64
 
 	// nodeToTargets maps a Node identifer to targets(children)
 	// with edge weights.
@@ -211,7 +211,7 @@ func (g *graph) Init() {
 	// assignment copies lock value
 
 	g.nodes = make(map[ID]Node)
-	g.nodeToSources = make(map[ID]map[ID]float64)
+	g.nodeParents = make(map[ID]map[ID]float64)
 	g.nodeToTargets = make(map[ID]map[ID]float64)
 }
 
@@ -277,8 +277,8 @@ func (g *graph) DeleteNode(id ID) bool {
 		delete(smap, id)
 	}
 
-	delete(g.nodeToSources, id)
-	for _, smap := range g.nodeToSources {
+	delete(g.nodeParents, id)
+	for _, smap := range g.nodeParents {
 		delete(smap, id)
 	}
 
@@ -307,16 +307,16 @@ func (g *graph) AddEdge(id1, id2 ID, weight float64) error {
 		tmap[id2] = weight
 		g.nodeToTargets[id1] = tmap
 	}
-	if _, ok := g.nodeToSources[id2]; ok {
-		if v, ok2 := g.nodeToSources[id2][id1]; ok2 {
-			g.nodeToSources[id2][id1] = v + weight
+	if _, ok := g.nodeParents[id2]; ok {
+		if v, ok2 := g.nodeParents[id2][id1]; ok2 {
+			g.nodeParents[id2][id1] = v + weight
 		} else {
-			g.nodeToSources[id2][id1] = weight
+			g.nodeParents[id2][id1] = weight
 		}
 	} else {
 		tmap := make(map[ID]float64)
 		tmap[id1] = weight
-		g.nodeToSources[id2] = tmap
+		g.nodeParents[id2] = tmap
 	}
 
 	return nil
@@ -340,12 +340,12 @@ func (g *graph) ReplaceEdge(id1, id2 ID, weight float64) error {
 		tmap[id2] = weight
 		g.nodeToTargets[id1] = tmap
 	}
-	if _, ok := g.nodeToSources[id2]; ok {
-		g.nodeToSources[id2][id1] = weight
+	if _, ok := g.nodeParents[id2]; ok {
+		g.nodeParents[id2][id1] = weight
 	} else {
 		tmap := make(map[ID]float64)
 		tmap[id1] = weight
-		g.nodeToSources[id2] = tmap
+		g.nodeParents[id2] = tmap
 	}
 	return nil
 }
@@ -366,9 +366,9 @@ func (g *graph) DeleteEdge(id1, id2 ID) error {
 			delete(g.nodeToTargets[id1], id2)
 		}
 	}
-	if _, ok := g.nodeToSources[id2]; ok {
-		if _, ok := g.nodeToSources[id2][id1]; ok {
-			delete(g.nodeToSources[id2], id1)
+	if _, ok := g.nodeParents[id2]; ok {
+		if _, ok := g.nodeParents[id2][id1]; ok {
+			delete(g.nodeParents[id2], id1)
 		}
 	}
 	return nil
@@ -402,8 +402,8 @@ func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
 	}
 
 	rs := make(map[ID]Node)
-	if _, ok := g.nodeToSources[id]; ok {
-		for n := range g.nodeToSources[id] {
+	if _, ok := g.nodeParents[id]; ok {
+		for n := range g.nodeParents[id] {
 			rs[n] = g.nodes[n]
 		}
 	}
@@ -450,7 +450,7 @@ func (g *graph) String() string {
 func newGraph() *graph {
 	return &graph{
 		nodes:         make(map[ID]Node),
-		nodeToSources: make(map[ID]map[ID]float64),
+		nodeParents:   make(map[ID]map[ID]float64),
 		nodeToTargets: make(map[ID]map[ID]float64),
 		//
 		// without this
