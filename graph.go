@@ -197,9 +197,9 @@ type graph struct {
 	// with edge weights.
 	nodeParents map[ID]map[ID]float64
 
-	// nodeToTargets maps a Node identifer to targets(children)
+	// nodeChildren maps a Node identifer to targets(children)
 	// with edge weights.
-	nodeToTargets map[ID]map[ID]float64
+	nodeChildren map[ID]map[ID]float64
 }
 
 func (g *graph) Init() {
@@ -212,7 +212,7 @@ func (g *graph) Init() {
 
 	g.nodes = make(map[ID]Node)
 	g.nodeParents = make(map[ID]map[ID]float64)
-	g.nodeToTargets = make(map[ID]map[ID]float64)
+	g.nodeChildren = make(map[ID]map[ID]float64)
 }
 
 func (g *graph) NodeCount() int {
@@ -272,8 +272,8 @@ func (g *graph) DeleteNode(id ID) bool {
 
 	delete(g.nodes, id)
 
-	delete(g.nodeToTargets, id)
-	for _, smap := range g.nodeToTargets {
+	delete(g.nodeChildren, id)
+	for _, smap := range g.nodeChildren {
 		delete(smap, id)
 	}
 
@@ -296,16 +296,16 @@ func (g *graph) AddEdge(id1, id2 ID, weight float64) error {
 		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
-	if _, ok := g.nodeToTargets[id1]; ok {
-		if v, ok2 := g.nodeToTargets[id1][id2]; ok2 {
-			g.nodeToTargets[id1][id2] = v + weight
+	if _, ok := g.nodeChildren[id1]; ok {
+		if v, ok2 := g.nodeChildren[id1][id2]; ok2 {
+			g.nodeChildren[id1][id2] = v + weight
 		} else {
-			g.nodeToTargets[id1][id2] = weight
+			g.nodeChildren[id1][id2] = weight
 		}
 	} else {
 		tmap := make(map[ID]float64)
 		tmap[id2] = weight
-		g.nodeToTargets[id1] = tmap
+		g.nodeChildren[id1] = tmap
 	}
 	if _, ok := g.nodeParents[id2]; ok {
 		if v, ok2 := g.nodeParents[id2][id1]; ok2 {
@@ -333,12 +333,12 @@ func (g *graph) ReplaceEdge(id1, id2 ID, weight float64) error {
 		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
-	if _, ok := g.nodeToTargets[id1]; ok {
-		g.nodeToTargets[id1][id2] = weight
+	if _, ok := g.nodeChildren[id1]; ok {
+		g.nodeChildren[id1][id2] = weight
 	} else {
 		tmap := make(map[ID]float64)
 		tmap[id2] = weight
-		g.nodeToTargets[id1] = tmap
+		g.nodeChildren[id1] = tmap
 	}
 	if _, ok := g.nodeParents[id2]; ok {
 		g.nodeParents[id2][id1] = weight
@@ -361,9 +361,9 @@ func (g *graph) DeleteEdge(id1, id2 ID) error {
 		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
-	if _, ok := g.nodeToTargets[id1]; ok {
-		if _, ok := g.nodeToTargets[id1][id2]; ok {
-			delete(g.nodeToTargets[id1], id2)
+	if _, ok := g.nodeChildren[id1]; ok {
+		if _, ok := g.nodeChildren[id1][id2]; ok {
+			delete(g.nodeChildren[id1], id2)
 		}
 	}
 	if _, ok := g.nodeParents[id2]; ok {
@@ -385,8 +385,8 @@ func (g *graph) EdgeWeight(id1, id2 ID) (float64, error) {
 		return 0, fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
-	if _, ok := g.nodeToTargets[id1]; ok {
-		if v, ok := g.nodeToTargets[id1][id2]; ok {
+	if _, ok := g.nodeChildren[id1]; ok {
+		if v, ok := g.nodeChildren[id1][id2]; ok {
 			return v, nil
 		}
 	}
@@ -419,8 +419,8 @@ func (g *graph) ChildNodes(id ID) (map[ID]Node, error) {
 	}
 
 	rs := make(map[ID]Node)
-	if _, ok := g.nodeToTargets[id]; ok {
-		for n := range g.nodeToTargets[id] {
+	if _, ok := g.nodeChildren[id]; ok {
+		for n := range g.nodeChildren[id] {
 			rs[n] = g.nodes[n]
 		}
 	}
@@ -449,9 +449,9 @@ func (g *graph) String() string {
 // newGraph returns a new graph.
 func newGraph() *graph {
 	return &graph{
-		nodes:         make(map[ID]Node),
-		nodeParents:   make(map[ID]map[ID]float64),
-		nodeToTargets: make(map[ID]map[ID]float64),
+		nodes:        make(map[ID]Node),
+		nodeParents:  make(map[ID]map[ID]float64),
+		nodeChildren: make(map[ID]map[ID]float64),
 		//
 		// without this
 		// panic: assignment to entry in nil map
