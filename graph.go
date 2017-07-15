@@ -174,6 +174,10 @@ type Graph interface {
 	// (Nodes that go out of the argument vertex.)
 	ChildNodes(id ID) (map[ID]Node, error)
 
+	// ExportToJSON serializes the graph into a JSON file and
+	// saves to disk.
+	ExportToJSON(path string) map[string]map[string]map[string]float64
+
 	// String describes the Graph.
 	String() string
 }
@@ -421,6 +425,10 @@ func (g *graph) ChildNodes(id ID) (map[ID]Node, error) {
 		}
 	}
 	return rs, nil
+}
+
+func (g *graph) ExportToJSON(path string) map[string]map[string]map[string]float64 {
+	panic("Not implemented")
 }
 
 func (g *graph) String() string {
