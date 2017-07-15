@@ -92,21 +92,21 @@ func (e *edge) String() string {
 
 // NewEdge creates an Edge between a source Node and a target Node with a
 // weight of 1.
-func NewEdge(src, tgt Node) Edge {
-	return &edge{
-		src: src,
-		tgt: tgt,
-		wgt: float64(1),
-	}
-}
-
-// NewWeightedEdge create a weighted Edge between a source Node and a
-// target Node.
-func NewWeightedEdge(src, tgt Node, wgt float64) Edge {
+func NewEdge(src, tgt Node, wgt float64) Edge {
 	return &edge{
 		src: src,
 		tgt: tgt,
 		wgt: wgt,
+	}
+}
+
+// NewUnweightedEdge create a weighted Edge between a source Node and a
+// target Node.
+func NewUnweightedEdge(src, tgt Node) Edge {
+	return &edge{
+		src: src,
+		tgt: tgt,
+		wgt: float64(1),
 	}
 }
 
