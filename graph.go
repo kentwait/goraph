@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"sync"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 // ID is unique identifier.
