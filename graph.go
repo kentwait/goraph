@@ -23,9 +23,14 @@ func (s StringID) String() string {
 
 // Node represents a vertex. The ID must be unique within the graph.
 type Node interface {
-	ID() ID // ID method returns the ID.
+	// ID returns the node's ID.
+	ID() ID
+
+	// String returns the string representation of the node which is the node ID.
 	String() string
-	Props() map[string]string // Props returns properties of a node
+
+	// Props returns properties associated to a node
+	Props() map[string]string
 }
 
 // Node is an internal type that implements the Node interface.
