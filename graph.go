@@ -47,6 +47,10 @@ func (n *node) String() string {
 	return n.id
 }
 
+func (n *node) Props() map[string]string {
+	return n.props
+}
+
 // NewNode creates a new Node type
 func NewNode(id string, props map[string]string) Node {
 	// TODO : Check if id is unique in the graph
@@ -539,13 +543,13 @@ func NewGraphFromJSON(rd io.Reader, graphID string) (Graph, error) {
 	for id1, mm := range gmap {
 		nd1, err := g.Node(StringID(id1))
 		if err != nil {
-			nd1 = NewNode(id1)
+			nd1 = NewNode(id1, make(map[string]string))
 			g.AddNode(nd1)
 		}
 		for id2, weight := range mm {
 			nd2, err := g.Node(StringID(id2))
 			if err != nil {
-				nd2 = NewNode(id2)
+				nd2 = NewNode(id2, make(map[string]string))
 				g.AddNode(nd2)
 			}
 			g.ReplaceEdge(nd1.ID(), nd2.ID(), weight)
@@ -628,13 +632,13 @@ func NewGraphFromYAML(rd io.Reader, graphID string) (Graph, error) {
 	for id1, mm := range gmap {
 		nd1, err := g.Node(StringID(id1))
 		if err != nil {
-			nd1 = NewNode(id1)
+			nd1 = NewNode(id1, make(map[string]string))
 			g.AddNode(nd1)
 		}
 		for id2, weight := range mm {
 			nd2, err := g.Node(StringID(id2))
 			if err != nil {
-				nd2 = NewNode(id2)
+				nd2 = NewNode(id2, make(map[string]string))
 				g.AddNode(nd2)
 			}
 			g.ReplaceEdge(nd1.ID(), nd2.ID(), weight)
