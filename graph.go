@@ -27,6 +27,8 @@ type Node interface {
 	String() string
 	Props() map[string]string // Props returns properties of a node
 }
+
+// Node is an internal type that implements the Node interface.
 type node struct {
 	id    string
 	props map[string]string
@@ -66,14 +68,6 @@ type edge struct {
 	wgt float64
 }
 
-func NewEdge(src, tgt Node, wgt float64) Edge {
-	return &edge{
-		src: src,
-		tgt: tgt,
-		wgt: wgt,
-	}
-}
-
 func (e *edge) Source() Node {
 	return e.src
 }
@@ -90,11 +84,25 @@ func (e *edge) String() string {
 	return fmt.Sprintf("%s -- %.3f -→ %s\n", e.src, e.wgt, e.tgt)
 }
 
+func NewEdge(src, tgt Node, wgt float64) Edge {
+	return &edge{
+		src: src,
+		tgt: tgt,
+		wgt: wgt,
+	}
+}
+
 type EdgeSlice []Edge
 
-func (e EdgeSlice) Len() int           { return len(e) }
-func (e EdgeSlice) Less(i, j int) bool { return e[i].Weight() < e[j].Weight() }
-func (e EdgeSlice) Swap(i, j int)      { e[i], e[j] = e[j], e[i] }
+func (e EdgeSlice) Len() int {
+	return len(e)
+}
+func (e EdgeSlice) Less(i, j int) bool {
+	return e[i].Weight() < e[j].Weight()
+}
+func (e EdgeSlice) Swap(i, j int) {
+	e[i], e[j] = e[j], e[i]
+}
 
 // Graph describes the methods of graph operations.
 // It assumes that the identifier of a Node is unique.
@@ -153,31 +161,16 @@ type Graph interface {
 type graph struct {
 	mu sync.RWMutex // guards the following
 
-	// idToNodes stores all nodes.
-	idToNodes map[ID]Node
+	// nodes stores all nodes.
+	nodes map[ID]Node
 
-	// nodeToSources maps a Node identifer to sources(parents) with edge weights.
+	// nodeToSources maps a Node identifer to sources(parents) 
+	// with edge weights.
 	nodeToSources map[ID]map[ID]float64
 
-	// nodeToTargets maps a Node identifer to targets(children) with edge weights.
+	// nodeToTargets maps a Node identifer to targets(children) 
+	// with edge weights.
 	nodeToTargets map[ID]map[ID]float64
-}
-
-// newGraph returns a new graph.
-func newGraph() *graph {
-	return &graph{
-		idToNodes:     make(map[ID]Node),
-		nodeToSources: make(map[ID]map[ID]float64),
-		nodeToTargets: make(map[ID]map[ID]float64),
-		//
-		// without this
-		// panic: assignment to entry in nil map
-	}
-}
-
-// NewGraph returns a new graph.
-func NewGraph() Graph {
-	return newGraph()
 }
 
 func (g *graph) Init() {
@@ -188,7 +181,7 @@ func (g *graph) Init() {
 	// (X) *g = *newGraph()
 	// assignment copies lock value
 
-	g.idToNodes = make(map[ID]Node)
+	g.nodes = make(map[ID]Node)
 	g.nodeToSources = make(map[ID]map[ID]float64)
 	g.nodeToTargets = make(map[ID]map[ID]float64)
 }
@@ -197,7 +190,7 @@ func (g *graph) GetNodeCount() int {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
-	return len(g.idToNodes)
+	return len(g.nodes)
 }
 
 func (g *graph) GetNode(id ID) (Node, error) {
@@ -208,18 +201,18 @@ func (g *graph) GetNode(id ID) (Node, error) {
 		return nil, fmt.Errorf("%s does not exist in the graph.", id)
 	}
 
-	return g.idToNodes[id], nil
+	return g.nodes[id], nil
 }
 
 func (g *graph) GetNodes() map[ID]Node {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
-	return g.idToNodes
+	return g.nodes
 }
 
 func (g *graph) unsafeExistID(id ID) bool {
-	_, ok := g.idToNodes[id]
+	_, ok := g.nodes[id]
 	return ok
 }
 
@@ -232,7 +225,7 @@ func (g *graph) AddNode(nd Node) bool {
 	}
 
 	id := nd.ID()
-	g.idToNodes[id] = nd
+	g.nodes[id] = nd
 	return true
 }
 
@@ -244,7 +237,7 @@ func (g *graph) DeleteNode(id ID) bool {
 		return false
 	}
 
-	delete(g.idToNodes, id)
+	delete(g.nodes, id)
 
 	delete(g.nodeToTargets, id)
 	for _, smap := range g.nodeToTargets {
@@ -378,7 +371,7 @@ func (g *graph) GetSources(id ID) (map[ID]Node, error) {
 	rs := make(map[ID]Node)
 	if _, ok := g.nodeToSources[id]; ok {
 		for n := range g.nodeToSources[id] {
-			rs[n] = g.idToNodes[n]
+			rs[n] = g.nodes[n]
 		}
 	}
 	return rs, nil
@@ -395,7 +388,7 @@ func (g *graph) GetTargets(id ID) (map[ID]Node, error) {
 	rs := make(map[ID]Node)
 	if _, ok := g.nodeToTargets[id]; ok {
 		for n := range g.nodeToTargets[id] {
-			rs[n] = g.idToNodes[n]
+			rs[n] = g.nodes[n]
 		}
 	}
 	return rs, nil
@@ -406,7 +399,7 @@ func (g *graph) String() string {
 	defer g.mu.RUnlock()
 
 	buf := new(bytes.Buffer)
-	for id1, nd1 := range g.idToNodes {
+	for id1, nd1 := range g.nodes {
 		nmap, _ := g.GetTargets(id1)
 		for id2, nd2 := range nmap {
 			weight, _ := g.GetWeight(id1, id2)
@@ -414,6 +407,23 @@ func (g *graph) String() string {
 		}
 	}
 	return buf.String()
+}
+
+// newGraph returns a new graph.
+func newGraph() *graph {
+	return &graph{
+		nodes:     make(map[ID]Node),
+		nodeToSources: make(map[ID]map[ID]float64),
+		nodeToTargets: make(map[ID]map[ID]float64),
+		//
+		// without this
+		// panic: assignment to entry in nil map
+	}
+}
+
+// NewGraph returns a new graph.
+func NewGraph() Graph {
+	return newGraph()
 }
 
 // NewGraphFromJSON returns a new Graph from a JSON file.
