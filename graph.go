@@ -223,6 +223,9 @@ func (g *graph) NodeCount() int {
 }
 
 func (g *graph) ID() ID {
+	g.mu.RLock()
+	defer g.mu.RUnlock()
+
 	return StringID(g.id)
 }
 
