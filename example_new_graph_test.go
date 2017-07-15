@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/gyuho/goraph"
+	"goraph"
 )
 
 func ExampleNewGraph() {

@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gyuho/goraph/testgraph"
+	"goraph/testgraph"
 )
 
 func TestNewGraph(t *testing.T) {
