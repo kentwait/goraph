@@ -90,7 +90,7 @@ func (e *edge) String() string {
 	return fmt.Sprintf("%s -- %.3f -→ %s\n", e.src, e.wgt, e.tgt)
 }
 
-// NewEdge creates a Edge between a source Node and a target Node with a
+// NewEdge creates an Edge between a source Node and a target Node with a
 // weight of 1.
 func NewEdge(src, tgt Node) Edge {
 	return &edge{
@@ -159,8 +159,8 @@ type Graph interface {
 	// DeleteEdge deletes an edge from id1 to id2.
 	DeleteEdge(id1, id2 ID) error
 
-	// GetWeight returns the weight from id1 to id2.
-	GetWeight(id1, id2 ID) (float64, error)
+	// EdgeWeight returns the weight from id1 to id2.
+	EdgeWeight(id1, id2 ID) (float64, error)
 
 	// GetSources returns the map of parent Nodes.
 	// (Nodes that come towards the argument vertex.)
@@ -359,7 +359,7 @@ func (g *graph) DeleteEdge(id1, id2 ID) error {
 	return nil
 }
 
-func (g *graph) GetWeight(id1, id2 ID) (float64, error) {
+func (g *graph) EdgeWeight(id1, id2 ID) (float64, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -420,7 +420,7 @@ func (g *graph) String() string {
 	for id1, nd1 := range g.nodes {
 		nmap, _ := g.GetTargets(id1)
 		for id2, nd2 := range nmap {
-			weight, _ := g.GetWeight(id1, id2)
+			weight, _ := g.EdgeWeight(id1, id2)
 			fmt.Fprintf(buf, "%s -- %.3f -→ %s\n", nd1, weight, nd2)
 		}
 	}
