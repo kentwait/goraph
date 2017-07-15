@@ -66,7 +66,7 @@ func Tarjan(g Graph) [][]ID {
 	d := newTarjanData()
 
 	// for each vertex v in G:
-	for v := range g.GetNodes() {
+	for v := range g.Nodes() {
 		// if v.index is undefined:
 		if _, ok := d.index[v]; !ok {
 			// tarjan(G, v, globalIndex, S, result)
@@ -135,7 +135,7 @@ func tarjan(
 	data.mu.Unlock()
 
 	// for each child vertex w of v:
-	cmap, err := g.GetTargets(id)
+	cmap, err := g.ChildNodes(id)
 	if err != nil {
 		panic(err)
 	}

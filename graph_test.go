@@ -35,8 +35,8 @@ func TestNewGraphFromJSON_graph(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("nil graph %v", err)
 	}
-	if g.nodeToTargets[StringID("C")][StringID("S")] != 9.0 {
-		t.Fatalf("weight from C to S must be 9.0 but %f", g.nodeToTargets[StringID("C")][StringID("S")])
+	if g.nodeParents[StringID("C")][StringID("S")] != 9.0 {
+		t.Fatalf("weight from C to S must be 9.0 but %f", g.nodeParents[StringID("C")][StringID("S")])
 	}
 	for _, tg := range testgraph.GraphSlice {
 		f, err := os.Open("testdata/graph.json")
@@ -49,11 +49,11 @@ func TestNewGraphFromJSON_graph(t *testing.T) {
 		if err != nil || !ok {
 			t.Fatalf("nil graph %v", err)
 		}
-		if g.GetNodeCount() != tg.TotalNodeCount {
-			t.Fatalf("%s | Expected %d but %d", tg.Name, tg.TotalNodeCount, g.GetNodeCount())
+		if g.NodeCount() != tg.TotalNodeCount {
+			t.Fatalf("%s | Expected %d but %d", tg.Name, tg.TotalNodeCount, g.NodeCount())
 		}
 		for _, elem := range tg.EdgeToWeight {
-			weight1, err := g.GetWeight(StringID(elem.Nodes[0]), StringID(elem.Nodes[1]))
+			weight1, err := g.EdgeWeight(StringID(elem.Nodes[0]), StringID(elem.Nodes[1]))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -76,8 +76,8 @@ func TestNewGraphFromYAML_graph(t *testing.T) {
 	if err != nil || !ok {
 		t.Fatalf("nil graph %v", err)
 	}
-	if g.nodeToTargets[StringID("C")][StringID("S")] != 9.0 {
-		t.Fatalf("weight from C to S must be 9.0 but %f", g.nodeToTargets[StringID("C")][StringID("S")])
+	if g.nodeParents[StringID("C")][StringID("S")] != 9.0 {
+		t.Fatalf("weight from C to S must be 9.0 but %f", g.nodeParents[StringID("C")][StringID("S")])
 	}
 	for _, tg := range testgraph.GraphSlice {
 		f, err := os.Open("testdata/graph.yml")
@@ -90,11 +90,11 @@ func TestNewGraphFromYAML_graph(t *testing.T) {
 		if err != nil || !ok {
 			t.Fatalf("nil graph %v", err)
 		}
-		if g.GetNodeCount() != tg.TotalNodeCount {
-			t.Fatalf("%s | Expected %d but %d", tg.Name, tg.TotalNodeCount, g.GetNodeCount())
+		if g.NodeCount() != tg.TotalNodeCount {
+			t.Fatalf("%s | Expected %d but %d", tg.Name, tg.TotalNodeCount, g.NodeCount())
 		}
 		for _, elem := range tg.EdgeToWeight {
-			weight1, err := g.GetWeight(StringID(elem.Nodes[0]), StringID(elem.Nodes[1]))
+			weight1, err := g.EdgeWeight(StringID(elem.Nodes[0]), StringID(elem.Nodes[1]))
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -117,7 +117,7 @@ func TestGraph_GetVertices(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		if g.GetNodeCount() != tg.TotalNodeCount {
+		if g.NodeCount() != tg.TotalNodeCount {
 			t.Fatalf("wrong number of vertices: %s", g)
 		}
 	}
@@ -135,7 +135,7 @@ func TestGraph_Init(t *testing.T) {
 			t.Fatal(err)
 		}
 		g.Init()
-		if g.GetNodeCount() != 0 {
+		if g.NodeCount() != 0 {
 			t.Fatalf("not initialized: %s", g)
 		}
 	}
@@ -154,31 +154,31 @@ func TestGraph_DeleteNode(t *testing.T) {
 	if !g.DeleteNode(StringID("D")) {
 		t.Fatal("D does not exist in the graph")
 	}
-	if nd, err := g.GetNode(StringID("D")); err == nil {
+	if nd, err := g.Node(StringID("D")); err == nil {
 		t.Fatalf("No Node Expected but got %s", nd)
 	}
-	if v, err := g.GetSources(StringID("C")); err != nil || len(v) != 1 {
+	if v, err := g.ParentNodes(StringID("C")); err != nil || len(v) != 1 {
 		t.Fatalf("Expected 1 edge incoming to C but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetTargets(StringID("C")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodes(StringID("C")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from C but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetTargets(StringID("F")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodes(StringID("F")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from F but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetSources(StringID("F")); err != nil || len(v) != 2 {
+	if v, err := g.ParentNodes(StringID("F")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges incoming to F but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetTargets(StringID("B")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodes(StringID("B")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from B but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetSources(StringID("E")); err != nil || len(v) != 4 {
+	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 4 {
 		t.Fatalf("Expected 4 edges incoming to E but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetTargets(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodes(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from E but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetTargets(StringID("T")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodes(StringID("T")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from T but %v\n\n%s", err, g)
 	}
 }
@@ -198,7 +198,7 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("B"), StringID("D")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.GetSources(StringID("D")); err != nil || len(v) != 4 {
+	if v, err := g.ParentNodes(StringID("D")); err != nil || len(v) != 4 {
 		t.Fatalf("Expected 4 edges incoming to D but %v\n\n%s", err, g)
 	}
 
@@ -208,7 +208,7 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("S"), StringID("C")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.GetTargets(StringID("S")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodes(StringID("S")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from S but %v\n\n%s", err, g)
 	}
 
@@ -218,17 +218,17 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("E"), StringID("D")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.GetTargets(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodes(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from E but %v\n\n%s", err, g)
 	}
-	if v, err := g.GetSources(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges incoming to E but %v\n\n%s", err, g)
 	}
 
 	if err := g.DeleteEdge(StringID("F"), StringID("E")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.GetSources(StringID("E")); err != nil || len(v) != 2 {
+	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges incoming to E but %v\n\n%s", err, g)
 	}
 }
@@ -246,7 +246,7 @@ func TestGraph_ReplaceEdge(t *testing.T) {
 	if err := g.ReplaceEdge(StringID("C"), StringID("S"), 1.0); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.GetWeight(StringID("C"), StringID("S")); err != nil || v != 1.0 {
+	if v, err := g.EdgeWeight(StringID("C"), StringID("S")); err != nil || v != 1.0 {
 		t.Fatalf("weight from C to S must be 1.0 but %v\n\n%v", err, g)
 	}
 }

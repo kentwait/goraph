@@ -58,7 +58,7 @@ func Dijkstra(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 	distance[source] = 0.0
 
 	// for each vertex v in G:
-	for id := range g.GetNodes() {
+	for id := range g.Nodes() {
 		// if v ≠ source:
 		if id != source {
 			// distance[v] = ∞
@@ -91,14 +91,14 @@ func Dijkstra(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 		}
 
 		// for each child vertex v of u:
-		cmap, err := g.GetTargets(u.id)
+		cmap, err := g.ChildNodes(u.id)
 		if err != nil {
 			return nil, nil, err
 		}
 		for v := range cmap {
 
 			// alt = distance[u] + weight(u, v)
-			weight, err := g.GetWeight(u.id, v)
+			weight, err := g.EdgeWeight(u.id, v)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -199,7 +199,7 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 	distance[source] = 0.0
 
 	// for each vertex v in G:
-	for id := range g.GetNodes() {
+	for id := range g.Nodes() {
 
 		// if v ≠ source:
 		if id != source {
@@ -214,19 +214,19 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 	prev := make(map[ID]ID)
 
 	// for 1 to |V|-1:
-	for i := 1; i <= g.GetNodeCount()-1; i++ {
+	for i := 1; i <= g.NodeCount()-1; i++ {
 
 		// for every edge (u, v):
-		for id := range g.GetNodes() {
+		for id := range g.Nodes() {
 
-			cmap, err := g.GetTargets(id)
+			cmap, err := g.ChildNodes(id)
 			if err != nil {
 				return nil, nil, err
 			}
 			u := id
 			for v := range cmap {
 				// edge (u, v)
-				weight, err := g.GetWeight(u, v)
+				weight, err := g.EdgeWeight(u, v)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -244,14 +244,14 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 				}
 			}
 
-			pmap, err := g.GetSources(id)
+			pmap, err := g.ParentNodes(id)
 			if err != nil {
 				return nil, nil, err
 			}
 			v := id
 			for u := range pmap {
 				// edge (u, v)
-				weight, err := g.GetWeight(u, v)
+				weight, err := g.EdgeWeight(u, v)
 				if err != nil {
 					return nil, nil, err
 				}
@@ -272,16 +272,16 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 	}
 
 	// for every edge (u, v):
-	for id := range g.GetNodes() {
+	for id := range g.Nodes() {
 
-		cmap, err := g.GetTargets(id)
+		cmap, err := g.ChildNodes(id)
 		if err != nil {
 			return nil, nil, err
 		}
 		u := id
 		for v := range cmap {
 			// edge (u, v)
-			weight, err := g.GetWeight(u, v)
+			weight, err := g.EdgeWeight(u, v)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -295,14 +295,14 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 			}
 		}
 
-		pmap, err := g.GetSources(id)
+		pmap, err := g.ParentNodes(id)
 		if err != nil {
 			return nil, nil, err
 		}
 		v := id
 		for u := range pmap {
 			// edge (u, v)
-			weight, err := g.GetWeight(u, v)
+			weight, err := g.EdgeWeight(u, v)
 			if err != nil {
 				return nil, nil, err
 			}

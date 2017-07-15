@@ -40,7 +40,7 @@ func TestGraph_Prim_13(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	for v := range g.GetNodes() {
+	for v := range g.Nodes() {
 		A, err := Prim(g, v)
 		if err != nil {
 			t.Error(err)

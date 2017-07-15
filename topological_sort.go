@@ -40,12 +40,12 @@ func TopologicalSort(g Graph) ([]ID, bool) {
 	L := []ID{}
 	isDAG := true
 	color := make(map[ID]string)
-	for v := range g.GetNodes() {
+	for v := range g.Nodes() {
 		color[v] = "white"
 	}
 
 	// for each vertex v in G:
-	for v := range g.GetNodes() {
+	for v := range g.Nodes() {
 		// if v.color == "white":
 		if color[v] == "white" {
 			// topologicalSortVisit(v, L, isDAG)
@@ -77,7 +77,7 @@ func topologicalSortVisit(
 		(*color)[id] = "gray"
 
 		// for each child vertex w of v:
-		cmap, err := g.GetTargets(id)
+		cmap, err := g.ChildNodes(id)
 		if err != nil {
 			panic(err)
 		}

@@ -36,7 +36,7 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 	forests := NewForests()
 
 	// for each vertex v in G:
-	for _, nd := range g.GetNodes() {
+	for _, nd := range g.Nodes() {
 		// MakeDisjointSet(v)
 		MakeDisjointSet(forests, nd.String())
 	}
@@ -44,13 +44,13 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 	// edges = get all edges
 	edges := []Edge{}
 	foundEdge := make(map[string]struct{})
-	for id1, nd1 := range g.GetNodes() {
-		tm, err := g.GetTargets(id1)
+	for id1, nd1 := range g.Nodes() {
+		tm, err := g.ParentNodes(id1)
 		if err != nil {
 			return nil, err
 		}
 		for id2, nd2 := range tm {
-			weight, err := g.GetWeight(id1, id2)
+			weight, err := g.EdgeWeight(id1, id2)
 			if err != nil {
 				return nil, err
 			}
@@ -61,12 +61,12 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 			}
 		}
 
-		sm, err := g.GetSources(id1)
+		sm, err := g.ParentNodes(id1)
 		if err != nil {
 			return nil, err
 		}
 		for id3, nd3 := range sm {
-			weight, err := g.GetWeight(id3, id1)
+			weight, err := g.EdgeWeight(id3, id1)
 			if err != nil {
 				return nil, err
 			}
@@ -139,7 +139,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 	distance[src] = 0.0
 
 	// for each vertex v in G:
-	for id := range g.GetNodes() {
+	for id := range g.Nodes() {
 
 		// if v ≠ src:
 		if id != src {
@@ -169,7 +169,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 		uID := u.id
 
 		// for each adjacent vertex v of u:
-		tm, err := g.GetTargets(uID)
+		tm, err := g.ParentNodes(uID)
 		if err != nil {
 			return nil, err
 		}
@@ -184,7 +184,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 			}
 
 			// weight(u, v)
-			weight, err := g.GetWeight(uID, vID)
+			weight, err := g.EdgeWeight(uID, vID)
 			if err != nil {
 				return nil, err
 			}
@@ -204,7 +204,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 			}
 		}
 
-		sm, err := g.GetSources(uID)
+		sm, err := g.ParentNodes(uID)
 		if err != nil {
 			return nil, err
 		}
@@ -220,7 +220,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 			}
 
 			// weight(u, v)
-			weight, err := g.GetWeight(uID, vID)
+			weight, err := g.EdgeWeight(uID, vID)
 			if err != nil {
 				return nil, err
 			}
@@ -243,15 +243,15 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 
 	tree := make(map[Edge]struct{})
 	for k, v := range prev {
-		weight, err := g.GetWeight(v, k)
+		weight, err := g.EdgeWeight(v, k)
 		if err != nil {
 			return nil, err
 		}
-		src, err := g.GetNode(v)
+		src, err := g.Node(v)
 		if err != nil {
 			return nil, err
 		}
-		tgt, err := g.GetNode(k)
+		tgt, err := g.Node(k)
 		if err != nil {
 			return nil, err
 		}
