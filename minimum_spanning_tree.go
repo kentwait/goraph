@@ -45,7 +45,7 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 	edges := []Edge{}
 	foundEdge := make(map[string]struct{})
 	for id1, nd1 := range g.Nodes() {
-		tm, err := g.ParentNodes(id1)
+		tm, err := g.ParentNodesOf(id1)
 		if err != nil {
 			return nil, err
 		}
@@ -61,7 +61,7 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 			}
 		}
 
-		sm, err := g.ParentNodes(id1)
+		sm, err := g.ParentNodesOf(id1)
 		if err != nil {
 			return nil, err
 		}
@@ -169,7 +169,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 		uID := u.id
 
 		// for each adjacent vertex v of u:
-		tm, err := g.ParentNodes(uID)
+		tm, err := g.ParentNodesOf(uID)
 		if err != nil {
 			return nil, err
 		}
@@ -204,7 +204,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 			}
 		}
 
-		sm, err := g.ParentNodes(uID)
+		sm, err := g.ParentNodesOf(uID)
 		if err != nil {
 			return nil, err
 		}

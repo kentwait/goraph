@@ -172,13 +172,13 @@ type Graph interface {
 	// EdgeWeight returns the weight from id1 to id2.
 	EdgeWeight(id1, id2 ID) (float64, error)
 
-	// ParentNodes returns the map of parent Nodes.
+	// ParentNodesOf returns the map of parent Nodes.
 	// (Nodes that come towards the argument vertex.)
-	ParentNodes(id ID) (map[ID]Node, error)
+	ParentNodesOf(id ID) (map[ID]Node, error)
 
-	// ChildNodes returns the map of child Nodes.
+	// ChildNodesOf returns the map of child Nodes.
 	// (Nodes that go out of the argument vertex.)
-	ChildNodes(id ID) (map[ID]Node, error)
+	ChildNodesOf(id ID) (map[ID]Node, error)
 
 	// ExportToJSON serializes the graph into a JSON file and
 	// saves to disk.
@@ -402,7 +402,7 @@ func (g *graph) EdgeWeight(id1, id2 ID) (float64, error) {
 	return 0.0, fmt.Errorf("there is no edge from %s to %s", id1, id2)
 }
 
-func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
+func (g *graph) ParentNodesOf(id ID) (map[ID]Node, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -419,7 +419,7 @@ func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
 	return rs, nil
 }
 
-func (g *graph) ChildNodes(id ID) (map[ID]Node, error) {
+func (g *graph) ChildNodesOf(id ID) (map[ID]Node, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -446,7 +446,7 @@ func (g *graph) String() string {
 
 	buf := new(bytes.Buffer)
 	for id1, nd1 := range g.nodes {
-		nmap, _ := g.ChildNodes(id1)
+		nmap, _ := g.ChildNodesOf(id1)
 		for id2, nd2 := range nmap {
 			weight, _ := g.EdgeWeight(id1, id2)
 			fmt.Fprintf(buf, "%s -- %.3f -→ %s\n", nd1, weight, nd2)

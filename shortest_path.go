@@ -91,7 +91,7 @@ func Dijkstra(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 		}
 
 		// for each child vertex v of u:
-		cmap, err := g.ChildNodes(u.id)
+		cmap, err := g.ChildNodesOf(u.id)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -219,7 +219,7 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 		// for every edge (u, v):
 		for id := range g.Nodes() {
 
-			cmap, err := g.ChildNodes(id)
+			cmap, err := g.ChildNodesOf(id)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -244,7 +244,7 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 				}
 			}
 
-			pmap, err := g.ParentNodes(id)
+			pmap, err := g.ParentNodesOf(id)
 			if err != nil {
 				return nil, nil, err
 			}
@@ -274,7 +274,7 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 	// for every edge (u, v):
 	for id := range g.Nodes() {
 
-		cmap, err := g.ChildNodes(id)
+		cmap, err := g.ChildNodesOf(id)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -295,7 +295,7 @@ func BellmanFord(g Graph, source, target ID) ([]ID, map[ID]float64, error) {
 			}
 		}
 
-		pmap, err := g.ParentNodes(id)
+		pmap, err := g.ParentNodesOf(id)
 		if err != nil {
 			return nil, nil, err
 		}

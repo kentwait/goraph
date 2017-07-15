@@ -135,7 +135,7 @@ func tarjan(
 	data.mu.Unlock()
 
 	// for each child vertex w of v:
-	cmap, err := g.ChildNodes(id)
+	cmap, err := g.ChildNodesOf(id)
 	if err != nil {
 		panic(err)
 	}

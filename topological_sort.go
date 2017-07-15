@@ -77,7 +77,7 @@ func topologicalSortVisit(
 		(*color)[id] = "gray"
 
 		// for each child vertex w of v:
-		cmap, err := g.ChildNodes(id)
+		cmap, err := g.ChildNodesOf(id)
 		if err != nil {
 			panic(err)
 		}

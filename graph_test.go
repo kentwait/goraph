@@ -157,28 +157,28 @@ func TestGraph_DeleteNode(t *testing.T) {
 	if nd, err := g.Node(StringID("D")); err == nil {
 		t.Fatalf("No Node Expected but got %s", nd)
 	}
-	if v, err := g.ParentNodes(StringID("C")); err != nil || len(v) != 1 {
+	if v, err := g.ParentNodesOf(StringID("C")); err != nil || len(v) != 1 {
 		t.Fatalf("Expected 1 edge incoming to C but %v\n\n%s", err, g)
 	}
-	if v, err := g.ChildNodes(StringID("C")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodesOf(StringID("C")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from C but %v\n\n%s", err, g)
 	}
-	if v, err := g.ChildNodes(StringID("F")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodesOf(StringID("F")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from F but %v\n\n%s", err, g)
 	}
-	if v, err := g.ParentNodes(StringID("F")); err != nil || len(v) != 2 {
+	if v, err := g.ParentNodesOf(StringID("F")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges incoming to F but %v\n\n%s", err, g)
 	}
-	if v, err := g.ChildNodes(StringID("B")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodesOf(StringID("B")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from B but %v\n\n%s", err, g)
 	}
-	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 4 {
+	if v, err := g.ParentNodesOf(StringID("E")); err != nil || len(v) != 4 {
 		t.Fatalf("Expected 4 edges incoming to E but %v\n\n%s", err, g)
 	}
-	if v, err := g.ChildNodes(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodesOf(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from E but %v\n\n%s", err, g)
 	}
-	if v, err := g.ChildNodes(StringID("T")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodesOf(StringID("T")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from T but %v\n\n%s", err, g)
 	}
 }
@@ -198,7 +198,7 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("B"), StringID("D")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.ParentNodes(StringID("D")); err != nil || len(v) != 4 {
+	if v, err := g.ParentNodesOf(StringID("D")); err != nil || len(v) != 4 {
 		t.Fatalf("Expected 4 edges incoming to D but %v\n\n%s", err, g)
 	}
 
@@ -208,7 +208,7 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("S"), StringID("C")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.ChildNodes(StringID("S")); err != nil || len(v) != 2 {
+	if v, err := g.ChildNodesOf(StringID("S")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges outgoing from S but %v\n\n%s", err, g)
 	}
 
@@ -218,17 +218,17 @@ func TestGraph_DeleteEdge(t *testing.T) {
 	if err := g.DeleteEdge(StringID("E"), StringID("D")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.ChildNodes(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ChildNodesOf(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges outgoing from E but %v\n\n%s", err, g)
 	}
-	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 3 {
+	if v, err := g.ParentNodesOf(StringID("E")); err != nil || len(v) != 3 {
 		t.Fatalf("Expected 3 edges incoming to E but %v\n\n%s", err, g)
 	}
 
 	if err := g.DeleteEdge(StringID("F"), StringID("E")); err != nil {
 		t.Fatal(err)
 	}
-	if v, err := g.ParentNodes(StringID("E")); err != nil || len(v) != 2 {
+	if v, err := g.ParentNodesOf(StringID("E")); err != nil || len(v) != 2 {
 		t.Fatalf("Expected 2 edges incoming to E but %v\n\n%s", err, g)
 	}
 }
