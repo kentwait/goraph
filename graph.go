@@ -111,16 +111,16 @@ type Graph interface {
 	// Init initializes a Graph.
 	Init()
 
-	// GetNodeCount returns the total number of nodes.
-	GetNodeCount() int
+	// NodeCount returns the total number of nodes.
+	NodeCount() int
 
-	// GetNode finds the Node.
-	GetNode(id ID) (Node, error)
+	// Node finds the Node.
+	Node(id ID) (Node, error)
 
-	// GetNodes returns a map from node ID to
+	// Nodes returns a map from node ID to
 	// empty struct value. Graph does not allow duplicate
 	// node ID or name.
-	GetNodes() map[ID]Node
+	Nodes() map[ID]Node
 
 	// AddNode adds a node to a graph, and returns false
 	// if the node already existed in the graph.
@@ -164,11 +164,11 @@ type graph struct {
 	// nodes stores all nodes.
 	nodes map[ID]Node
 
-	// nodeToSources maps a Node identifer to sources(parents) 
+	// nodeToSources maps a Node identifer to sources(parents)
 	// with edge weights.
 	nodeToSources map[ID]map[ID]float64
 
-	// nodeToTargets maps a Node identifer to targets(children) 
+	// nodeToTargets maps a Node identifer to targets(children)
 	// with edge weights.
 	nodeToTargets map[ID]map[ID]float64
 }
@@ -186,14 +186,14 @@ func (g *graph) Init() {
 	g.nodeToTargets = make(map[ID]map[ID]float64)
 }
 
-func (g *graph) GetNodeCount() int {
+func (g *graph) NodeCount() int {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
 	return len(g.nodes)
 }
 
-func (g *graph) GetNode(id ID) (Node, error) {
+func (g *graph) Node(id ID) (Node, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -204,7 +204,7 @@ func (g *graph) GetNode(id ID) (Node, error) {
 	return g.nodes[id], nil
 }
 
-func (g *graph) GetNodes() map[ID]Node {
+func (g *graph) Nodes() map[ID]Node {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -412,7 +412,7 @@ func (g *graph) String() string {
 // newGraph returns a new graph.
 func newGraph() *graph {
 	return &graph{
-		nodes:     make(map[ID]Node),
+		nodes:         make(map[ID]Node),
 		nodeToSources: make(map[ID]map[ID]float64),
 		nodeToTargets: make(map[ID]map[ID]float64),
 		//
@@ -497,13 +497,13 @@ func NewGraphFromJSON(rd io.Reader, graphID string) (Graph, error) {
 
 	g := newGraph()
 	for id1, mm := range gmap {
-		nd1, err := g.GetNode(StringID(id1))
+		nd1, err := g.Node(StringID(id1))
 		if err != nil {
 			nd1 = NewNode(id1)
 			g.AddNode(nd1)
 		}
 		for id2, weight := range mm {
-			nd2, err := g.GetNode(StringID(id2))
+			nd2, err := g.Node(StringID(id2))
 			if err != nil {
 				nd2 = NewNode(id2)
 				g.AddNode(nd2)
@@ -586,13 +586,13 @@ func NewGraphFromYAML(rd io.Reader, graphID string) (Graph, error) {
 
 	g := newGraph()
 	for id1, mm := range gmap {
-		nd1, err := g.GetNode(StringID(id1))
+		nd1, err := g.Node(StringID(id1))
 		if err != nil {
 			nd1 = NewNode(id1)
 			g.AddNode(nd1)
 		}
 		for id2, weight := range mm {
-			nd2, err := g.GetNode(StringID(id2))
+			nd2, err := g.Node(StringID(id2))
 			if err != nil {
 				nd2 = NewNode(id2)
 				g.AddNode(nd2)
