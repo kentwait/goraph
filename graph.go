@@ -216,7 +216,7 @@ func (g *graph) Node(id ID) (Node, error) {
 	defer g.mu.RUnlock()
 
 	if !g.unsafeExistID(id) {
-		return nil, fmt.Errorf("%s does not exist in the graph.", id)
+		return nil, fmt.Errorf("%s does not exist in the graph", id)
 	}
 
 	return g.nodes[id], nil
@@ -275,10 +275,10 @@ func (g *graph) AddEdge(id1, id2 ID, weight float64) error {
 	defer g.mu.Unlock()
 
 	if !g.unsafeExistID(id1) {
-		return fmt.Errorf("%s does not exist in the graph.", id1)
+		return fmt.Errorf("%s does not exist in the graph", id1)
 	}
 	if !g.unsafeExistID(id2) {
-		return fmt.Errorf("%s does not exist in the graph.", id2)
+		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
 	if _, ok := g.nodeToTargets[id1]; ok {
@@ -312,10 +312,10 @@ func (g *graph) ReplaceEdge(id1, id2 ID, weight float64) error {
 	defer g.mu.Unlock()
 
 	if !g.unsafeExistID(id1) {
-		return fmt.Errorf("%s does not exist in the graph.", id1)
+		return fmt.Errorf("%s does not exist in the graph", id1)
 	}
 	if !g.unsafeExistID(id2) {
-		return fmt.Errorf("%s does not exist in the graph.", id2)
+		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
 	if _, ok := g.nodeToTargets[id1]; ok {
@@ -340,10 +340,10 @@ func (g *graph) DeleteEdge(id1, id2 ID) error {
 	defer g.mu.Unlock()
 
 	if !g.unsafeExistID(id1) {
-		return fmt.Errorf("%s does not exist in the graph.", id1)
+		return fmt.Errorf("%s does not exist in the graph", id1)
 	}
 	if !g.unsafeExistID(id2) {
-		return fmt.Errorf("%s does not exist in the graph.", id2)
+		return fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
 	if _, ok := g.nodeToTargets[id1]; ok {
@@ -364,10 +364,10 @@ func (g *graph) EdgeWeight(id1, id2 ID) (float64, error) {
 	defer g.mu.RUnlock()
 
 	if !g.unsafeExistID(id1) {
-		return 0, fmt.Errorf("%s does not exist in the graph.", id1)
+		return 0, fmt.Errorf("%s does not exist in the graph", id1)
 	}
 	if !g.unsafeExistID(id2) {
-		return 0, fmt.Errorf("%s does not exist in the graph.", id2)
+		return 0, fmt.Errorf("%s does not exist in the graph", id2)
 	}
 
 	if _, ok := g.nodeToTargets[id1]; ok {
@@ -383,7 +383,7 @@ func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
 	defer g.mu.RUnlock()
 
 	if !g.unsafeExistID(id) {
-		return nil, fmt.Errorf("%s does not exist in the graph.", id)
+		return nil, fmt.Errorf("%s does not exist in the graph", id)
 	}
 
 	rs := make(map[ID]Node)
@@ -400,7 +400,7 @@ func (g *graph) ChildNodes(id ID) (map[ID]Node, error) {
 	defer g.mu.RUnlock()
 
 	if !g.unsafeExistID(id) {
-		return nil, fmt.Errorf("%s does not exist in the graph.", id)
+		return nil, fmt.Errorf("%s does not exist in the graph", id)
 	}
 
 	rs := make(map[ID]Node)
