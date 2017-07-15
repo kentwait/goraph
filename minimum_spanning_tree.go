@@ -54,7 +54,7 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 			if err != nil {
 				return nil, err
 			}
-			edge := NewEdge(nd1, nd2, weight)
+			edge := NewEdge(nd1, nd2, weight, make(map[string]string))
 			if _, ok := foundEdge[edge.String()]; !ok {
 				edges = append(edges, edge)
 				foundEdge[edge.String()] = struct{}{}
@@ -70,7 +70,7 @@ func Kruskal(g Graph) (map[Edge]struct{}, error) {
 			if err != nil {
 				return nil, err
 			}
-			edge := NewEdge(nd3, nd1, weight)
+			edge := NewEdge(nd3, nd1, weight, make(map[string]string))
 			if _, ok := foundEdge[edge.String()]; !ok {
 				edges = append(edges, edge)
 				foundEdge[edge.String()] = struct{}{}
@@ -255,7 +255,7 @@ func Prim(g Graph, src ID) (map[Edge]struct{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		tree[NewEdge(src, tgt, weight)] = struct{}{}
+		tree[NewEdge(src, tgt, weight, make(map[string]string))] = struct{}{}
 	}
 	return tree, nil
 }

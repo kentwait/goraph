@@ -69,15 +69,17 @@ type Edge interface {
 	Source() Node
 	Target() Node
 	Weight() float64
+	Props() map[string]string
 	String() string
 }
 
 // edge is an Edge type that represents a weighted connection from a
 // source Node to a target Node.
 type edge struct {
-	src Node
-	tgt Node
-	wgt float64
+	src   Node
+	tgt   Node
+	props map[string]string
+	wgt   float64
 }
 
 func (e *edge) Source() Node {
@@ -92,27 +94,33 @@ func (e *edge) Weight() float64 {
 	return e.wgt
 }
 
+func (e *edge) Props() map[string]string {
+	return e.props
+}
+
 func (e *edge) String() string {
 	return fmt.Sprintf("%s -- %.3f -→ %s\n", e.src, e.wgt, e.tgt)
 }
 
 // NewEdge creates an Edge between a source Node and a target Node with a
 // weight of 1.
-func NewEdge(src, tgt Node, wgt float64) Edge {
+func NewEdge(src, tgt Node, wgt float64, props map[string]string) Edge {
 	return &edge{
-		src: src,
-		tgt: tgt,
-		wgt: wgt,
+		src:   src,
+		tgt:   tgt,
+		wgt:   wgt,
+		props: props,
 	}
 }
 
 // NewUnweightedEdge create a weighted Edge between a source Node and a
 // target Node.
-func NewUnweightedEdge(src, tgt Node) Edge {
+func NewUnweightedEdge(src, tgt Node, props map[string]string) Edge {
 	return &edge{
-		src: src,
-		tgt: tgt,
-		wgt: float64(1),
+		src:   src,
+		tgt:   tgt,
+		wgt:   float64(1),
+		props: props,
 	}
 }
 
