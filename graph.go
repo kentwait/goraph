@@ -166,9 +166,9 @@ type Graph interface {
 	// (Nodes that come towards the argument vertex.)
 	ParentNodes(id ID) (map[ID]Node, error)
 
-	// GetTargets returns the map of child Nodes.
+	// ChildNodes returns the map of child Nodes.
 	// (Nodes that go out of the argument vertex.)
-	GetTargets(id ID) (map[ID]Node, error)
+	ChildNodes(id ID) (map[ID]Node, error)
 
 	// String describes the Graph.
 	String() string
@@ -395,7 +395,7 @@ func (g *graph) ParentNodes(id ID) (map[ID]Node, error) {
 	return rs, nil
 }
 
-func (g *graph) GetTargets(id ID) (map[ID]Node, error) {
+func (g *graph) ChildNodes(id ID) (map[ID]Node, error) {
 	g.mu.RLock()
 	defer g.mu.RUnlock()
 
@@ -418,7 +418,7 @@ func (g *graph) String() string {
 
 	buf := new(bytes.Buffer)
 	for id1, nd1 := range g.nodes {
-		nmap, _ := g.GetTargets(id1)
+		nmap, _ := g.ChildNodes(id1)
 		for id2, nd2 := range nmap {
 			weight, _ := g.EdgeWeight(id1, id2)
 			fmt.Fprintf(buf, "%s -- %.3f -→ %s\n", nd1, weight, nd2)
