@@ -110,6 +110,7 @@ func NewUnweightedEdge(src, tgt Node) Edge {
 	}
 }
 
+// EdgeSlice is a slice of Edge types
 type EdgeSlice []Edge
 
 func (e EdgeSlice) Len() int {
@@ -128,6 +129,9 @@ func (e EdgeSlice) Swap(i, j int) {
 type Graph interface {
 	// Init initializes a Graph.
 	Init()
+
+	// ID returns the node's ID.
+	ID() ID
 
 	// NodeCount returns the total number of nodes.
 	NodeCount() int
@@ -179,6 +183,9 @@ type Graph interface {
 type graph struct {
 	mu sync.RWMutex // guards the following
 
+	// id is a unique graph identifier
+	id string
+
 	// nodes stores all nodes.
 	nodes map[ID]Node
 
@@ -209,6 +216,10 @@ func (g *graph) NodeCount() int {
 	defer g.mu.RUnlock()
 
 	return len(g.nodes)
+}
+
+func (g *graph) ID() ID {
+	return StringID(g.id)
 }
 
 func (g *graph) Node(id ID) (Node, error) {
