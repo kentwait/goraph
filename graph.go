@@ -61,7 +61,8 @@ type Edge interface {
 	String() string
 }
 
-// edge is an Edge from Source to Target.
+// edge is an Edge type that represents a weighted connection from a
+// source Node to a target Node.
 type edge struct {
 	src Node
 	tgt Node
@@ -84,7 +85,19 @@ func (e *edge) String() string {
 	return fmt.Sprintf("%s -- %.3f -→ %s\n", e.src, e.wgt, e.tgt)
 }
 
-func NewEdge(src, tgt Node, wgt float64) Edge {
+// NewEdge creates a Edge between a source Node and a target Node with a
+// weight of 1.
+func NewEdge(src, tgt Node) Edge {
+	return &edge{
+		src: src,
+		tgt: tgt,
+		wgt: float64(1),
+	}
+}
+
+// NewWeightedEdge create a weighted Edge between a source Node and a
+// target Node.
+func NewWeightedEdge(src, tgt Node, wgt float64) Edge {
 	return &edge{
 		src: src,
 		tgt: tgt,
